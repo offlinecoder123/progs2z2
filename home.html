@@ -119,62 +119,8 @@
   }
   @keyframes blink{ 50%{ opacity: 0; } }
 
-  #search-container{
-    margin-top: 22px;
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-  }
-  .prompt-chip{
-    display:flex; align-items:center; justify-content:center;
-    padding: 0 12px;
-    border-radius: 8px;
-    border: 1px solid var(--panel-line);
-    color: var(--neon-dim);
-    font-size: 13px;
-    background: rgba(0,0,0,0.3);
-  }
-
-  #search-bar{
-    flex: 1;
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    border: 1px solid var(--panel-line);
-    background: rgba(0,0,0,0.35);
-    color: var(--text);
-    outline: none;
-    transition: .25s;
-    cursor: none;
-  }
-  #search-bar::placeholder{ color: #3f6653; letter-spacing: .04em; }
-  #search-bar:hover, #search-bar:focus{
-    border-color: var(--neon-dim);
-    box-shadow: 0 0 0 3px rgba(57,255,106,0.12), 0 0 18px rgba(57,255,106,0.15);
-  }
-
-  #search-button{
-    border-radius: 8px;
-    padding: 0 18px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: .08em;
-    background: rgba(57,255,106,0.1);
-    border: 1px solid var(--neon-dim);
-    color: var(--neon);
-    cursor: none;
-    transition: .2s;
-  }
-  #search-button:hover{
-    background: var(--neon);
-    color: #04140a;
-    box-shadow: 0 0 22px var(--neon-glow);
-  }
-
   #launch-button{
-    margin-top: 14px;
+    margin-top: 22px;
     width: 100%;
     border-radius: 8px;
     padding: 14px 20px;
@@ -205,6 +151,40 @@
     transform: translateY(-1px);
   }
   #launch-button:hover::before{ left: 130%; }
+
+  /* === Clock, top-center === */
+  .clock-container{
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+    z-index: 4;
+    display: flex; flex-direction: column; align-items: center;
+    border: 1px solid var(--panel-line);
+    border-radius: 10px;
+    background: rgba(4,10,8,0.75);
+    backdrop-filter: blur(3px);
+    padding: 8px 18px;
+    box-shadow: 0 0 24px -8px rgba(0,0,0,0.8);
+    transition: .2s;
+  }
+  .clock-container:hover{
+    border-color: var(--neon-dim);
+    box-shadow: 0 0 18px -4px var(--neon-glow);
+  }
+  .clock-time{
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--neon);
+    letter-spacing: .06em;
+    text-shadow: 0 0 10px var(--neon-glow);
+    line-height: 1.2;
+  }
+  .clock-date{
+    font-size: 10px;
+    letter-spacing: .12em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
 
   /* === Battery, shaped like an actual battery === */
   .battery-container{
@@ -368,16 +348,20 @@
   }
 
   @media (max-width: 520px){
-    #search-container{ flex-wrap: wrap; }
-    .prompt-chip{ display:none; }
     .battery-container{ transform: scale(.85); transform-origin: top left; }
     .icon-buttons{ transform: translateX(-50%) scale(.8); }
+    .clock-container{ transform: translateX(-50%) scale(.85); }
   }
 </style>
 </head>
 <body>
 
   <div id="overlay"></div>
+
+  <div class="clock-container">
+    <span class="clock-time" id="clock-time">00:00:00</span>
+    <span class="clock-date" id="clock-date">--- -- ----</span>
+  </div>
 
   <main>
     <div class="terminal">
@@ -394,12 +378,6 @@
         <div class="rule"></div>
 
         <div class="quote-line" id="quote"><span class="caret"></span></div>
-
-        <div id="search-container">
-          <div class="prompt-chip">/find</div>
-          <input type="text" id="search-bar" placeholder="search progs2z..." onkeypress="handleSearch(event)">
-          <button id="search-button" onclick="handleSearchClick()">RUN</button>
-        </div>
 
         <button id="launch-button" onclick="launchWebsite()">▶ LAUNCH ABOUT:BLANK</button>
       </div>
@@ -476,17 +454,27 @@
     }
     setTimeout(() => typeQuote(quotes[Math.floor(Math.random()*quotes.length)]), 1200);
 
-    // Search handlers
-    function handleSearch(event){
-      if(event.key === 'Enter') handleSearchClick();
-    }
-    function handleSearchClick(){
-      const query = document.getElementById('search-bar').value;
-      window.open(`https://sites.google.com/search/prohomework2z?query=${encodeURIComponent(query)}`, '_blank');
-    }
     function launchWebsite(){
       window.open("https://sites.google.com/view/prohomework2z", "popup", "width=800,height=600");
     }
+
+    // ==== Clock, top-center, updates every second ====
+    const clockTimeEl = document.getElementById('clock-time');
+    const clockDateEl = document.getElementById('clock-date');
+    const dateFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+    function updateClock(){
+      const now = new Date();
+      let h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12; if(h === 0) h = 12;
+      clockTimeEl.textContent = `${String(h).padStart(2,'0')}:${m}:${s} ${ampm}`;
+      clockDateEl.textContent = dateFmt.format(now);
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
 
     // Battery indicator
     function updateBattery(){
