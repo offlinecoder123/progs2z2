@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>home</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg: #04080a;
+    --panel: #060f0c;
+    --panel-line: #16382a;
+    --neon: #39ff6a;
+    --neon-dim: #1c8a45;
+    --neon-glow: rgba(57,255,106,0.55);
+    --amber: #ffb020;
+    --red: #ff4d5e;
+    --text-dim: #8fae9a;
+    --text: #d9ffe6;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body, html{
+    margin:0; padding:0; width:100%; height:100%;
+    background: var(--bg);
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: none;
+  }
+
+  #overlay{
+    position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  }
+
+  main{
+    position: relative; z-index: 2;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .terminal{
+    width: min(880px, 96vw);
+    background: linear-gradient(180deg, rgba(6,20,14,0.92), rgba(4,10,8,0.94));
+    border: 1px solid var(--panel-line);
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px rgba(57,255,106,0.06), 0 30px 80px -20px rgba(0,0,0,0.9), 0 0 60px -10px var(--neon-glow);
+    overflow: hidden;
+    animation: bootIn 0.7s cubic-bezier(.2,.9,.25,1) both;
+  }
+  @keyframes bootIn{
+    from{ opacity:0; transform: translateY(18px) scale(.98); filter: blur(6px); }
+    to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .titlebar{
+    display:flex; align-items:center; gap:8px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.35);
+    border-bottom: 1px solid var(--panel-line);
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; opacity:.9; }
+  .dot.r{ background: var(--red); }
+  .dot.a{ background: var(--amber); }
+  .dot.g{ background: var(--neon); }
+  .titlebar-label{
+    margin-left: 8px;
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--text-dim);
+  }
+  .titlebar-tag{
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--neon-dim);
+    border: 1px solid var(--panel-line);
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: .05em;
+  }
+
+  .term-body{
+    padding: 30px 30px 26px;
+    text-align: center;
+  }
+
+  #center-image{
+    max-width: 78%;
+    height: auto;
+    filter: drop-shadow(0 0 18px rgba(57,255,106,0.35));
+    pointer-events: none;
+    margin-bottom: 10px;
+  }
+
+  .rule{
+    height: 1px;
+    margin: 18px 0;
+    background: linear-gradient(90deg, transparent, var(--panel-line), transparent);
+  }
+
+  .quote-line{
+    font-size: 13px;
+    color: var(--neon);
+    text-align: left;
+    min-height: 1.4em;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .quote-line::before{ content: "> "; color: var(--neon-dim); }
+  .caret{
+    display:inline-block;
+    width: 7px; height: 1em;
+    background: var(--neon);
+    margin-left: 2px;
+    vertical-align: -2px;
+    animation: blink 1s steps(1) infinite;
+    box-shadow: 0 0 6px var(--neon-glow);
+  }
+  @keyframes blink{ 50%{ opacity: 0; } }
+
+  #search-container{
+    margin-top: 22px;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .prompt-chip{
+    display:flex; align-items:center; justify-content:center;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--panel-line);
+    color: var(--neon-dim);
+    font-size: 13px;
+    background: rgba(0,0,0,0.3);
+  }
+
+  #search-bar{
+    flex: 1;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    border: 1px solid var(--panel-line);
+    background: rgba(0,0,0,0.35);
+    color: var(--text);
+    outline: none;
+    transition: .25s;
+    cursor: none;
+  }
+  #search-bar::placeholder{ color: #3f6653; letter-spacing: .04em; }
+  #search-bar:hover, #search-bar:focus{
+    border-color: var(--neon-dim);
+    box-shadow: 0 0 0 3px rgba(57,255,106,0.12), 0 0 18px rgba(57,255,106,0.15);
+  }
+
+  #search-button{
+    border-radius: 8px;
+    padding: 0 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .08em;
+    background: rgba(57,255,106,0.1);
+    border: 1px solid var(--neon-dim);
+    color: var(--neon);
+    cursor: none;
+    transition: .2s;
+  }
+  #search-button:hover{
+    background: var(--neon);
+    color: #04140a;
+    box-shadow: 0 0 22px var(--neon-glow);
+  }
+
+  #launch-button{
+    margin-top: 14px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .12em;
+    background: linear-gradient(180deg, rgba(57,255,106,0.16), rgba(57,255,106,0.05));
+    border: 1px solid var(--neon-dim);
+    color: var(--neon);
+    cursor: none;
+    transition: .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  #launch-button::before{
+    content:"";
+    position:absolute; top:0; left:-60%;
+    width: 40%; height:100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: skewX(-20deg);
+    transition: left .5s ease;
+  }
+  #launch-button:hover{
+    background: var(--neon);
+    color: #04140a;
+    box-shadow: 0 0 30px var(--neon-glow);
+    transform: translateY(-1px);
+  }
+  #launch-button:hover::before{ left: 130%; }
+
+  /* === Battery, shaped like an actual battery === */
+  .battery-container{
+    position: fixed; top: 18px; left: 18px; z-index: 4;
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--panel-line);
+    border-radius: 10px;
+    background: rgba(4,10,8,0.75);
+    backdrop-filter: blur(3px);
+    padding: 8px 10px;
+    box-shadow: 0 0 24px -8px rgba(0,0,0,0.8);
+    transition: .2s;
+  }
+  .battery-container:hover{
+    border-color: var(--neon-dim);
+    box-shadow: 0 0 18px -4px var(--neon-glow);
+  }
+  .battery-icon{
+    display:flex; align-items:center;
+  }
+  .battery-body{
+    position: relative;
+    width: 46px; height: 22px;
+    border: 2px solid var(--text);
+    border-radius: 4px;
+    padding: 2px;
+    display:flex; align-items:stretch;
+  }
+  .battery-tip{
+    width: 4px; height: 10px;
+    background: var(--text);
+    align-self: center;
+    margin-left: 2px;
+    border-radius: 0 2px 2px 0;
+  }
+  .battery-cells{
+    flex: 1; display:flex; gap: 2px;
+  }
+  .battery-fill{
+    background: var(--neon);
+    border-radius: 1px;
+    transition: width .4s ease, background-color .4s ease;
+    box-shadow: 0 0 6px var(--neon-glow);
+    width: 100%;
+    height: 100%;
+  }
+  .battery-track{
+    flex: 1;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .battery-readout{
+    display:flex; flex-direction:column; line-height:1.1;
+  }
+  .battery-pct{
+    font-size: 13px; font-weight: 700; color: var(--text);
+  }
+  .battery-label{
+    font-size: 9px; letter-spacing: .1em; color: var(--text-dim);
+  }
+  .bolt{
+    color: var(--amber);
+    font-size: 11px;
+    margin-left: 2px;
+  }
+
+  /* === Socials, bottom-center === */
+  .icon-buttons{
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 4;
+    display: flex; gap: 12px;
+  }
+  .icon-btn{
+    width: 52px; height: 52px;
+    border-radius: 10px;
+    overflow: hidden;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(4,10,8,0.75);
+    border: 1px solid var(--panel-line);
+    backdrop-filter: blur(3px);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .icon-btn img{
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(1) brightness(1.6);
+    transition: filter .25s ease, transform .25s ease;
+  }
+  .icon-btn:hover{
+    transform: translateY(-4px);
+    border-color: var(--neon-dim);
+    box-shadow: 0 8px 24px -6px var(--neon-glow);
+  }
+  .icon-btn:hover img{
+    filter: none;
+    transform: scale(1.08);
+  }
+
+  #cursor-dot{
+    position: fixed; top:0; left:0;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon-glow), 0 0 2px #fff;
+    pointer-events: none; z-index: 60;
+    transform: translate(-50%,-50%);
+  }
+  #cursor-ring{
+    position: fixed; top:0; left:0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--neon);
+    box-shadow: 0 0 14px var(--neon-glow) inset, 0 0 10px var(--neon-glow);
+    pointer-events: none; z-index: 59;
+    transform: translate(-50%,-50%);
+  }
+  #cursor-ring::before{
+    content:"";
+    position:absolute; inset: -6px;
+    border-radius: 50%;
+    border: 1px dashed rgba(57,255,106,0.4);
+    animation: spin 2.4s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .cursor-hand{
+    position: absolute;
+    left: 50%; top: 50%;
+    transform-origin: 50% 100%;
+    background: var(--neon);
+    box-shadow: 0 0 5px var(--neon-glow);
+    border-radius: 2px;
+  }
+  #hand-1{
+    width: 2px; height: 10px;
+    margin-left: -1px; margin-top: -10px;
+    animation: spinHand1 0.9s linear infinite;
+  }
+  #hand-2{
+    width: 1.5px; height: 14px;
+    margin-left: -0.75px; margin-top: -14px;
+    animation: spinHand2 1.6s linear infinite reverse;
+    opacity: .75;
+  }
+  @keyframes spinHand1{ to{ transform: rotate(360deg); } }
+  @keyframes spinHand2{ to{ transform: rotate(360deg); } }
+
+  #cursor-ring.active{
+    width: 40px; height: 40px;
+    background: rgba(57,255,106,0.08);
+  }
+
+  .spark{
+    position: fixed; top:0; left:0;
+    border-radius: 50%;
+    background: var(--neon);
+    pointer-events: none; z-index: 58;
+    transform: translate(-50%,-50%);
+    box-shadow: 0 0 6px var(--neon-glow);
+  }
+
+  @media (max-width: 520px){
+    #search-container{ flex-wrap: wrap; }
+    .prompt-chip{ display:none; }
+    .battery-container{ transform: scale(.85); transform-origin: top left; }
+    .icon-buttons{ transform: translateX(-50%) scale(.8); }
+  }
+</style>
+</head>
+<body>
+
+  <div id="overlay"></div>
+
+  <main>
+    <div class="terminal">
+      <div class="titlebar">
+        <span class="dot r"></span>
+        <span class="dot a"></span>
+        <span class="dot g"></span>
+        <span class="titlebar-label">progs2z@test.xyz</span>
+        <span class="titlebar-tag">v7.2.0</span>
+      </div>
+      <div class="term-body">
+        <img id="center-image" src="https://i.postimg.cc/P5gpXxD8/2-7-12-2026.png" alt="ProGS2Z">
+
+        <div class="rule"></div>
+
+        <div class="quote-line" id="quote"><span class="caret"></span></div>
+
+        <div id="search-container">
+          <div class="prompt-chip">/find</div>
+          <input type="text" id="search-bar" placeholder="search progs2z..." onkeypress="handleSearch(event)">
+          <button id="search-button" onclick="handleSearchClick()">RUN</button>
+        </div>
+
+        <button id="launch-button" onclick="launchWebsite()">▶ LAUNCH ABOUT:BLANK</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="battery-container">
+    <div class="battery-icon">
+      <div class="battery-body">
+        <div class="battery-track"><div class="battery-fill" id="batteryLevel"></div></div>
+        <div class="battery-tip"></div>
+      </div>
+    </div>
+    <div class="battery-readout">
+      <span class="battery-pct" id="batteryPct">100%<span class="bolt" id="batteryBolt"></span></span>
+      <span class="battery-label">PWR</span>
+    </div>
+  </div>
+
+  <div class="icon-buttons">
+    <a href="https://www.tiktok.com/@prohomework2z" target="_blank" class="icon-btn"><img src="https://i.postimg.cc/MKXM2W5p/ttlogo.png" alt="TikTok"></a>
+    <a href="https://www.youtube.com/@ProGS2Z" target="_blank" class="icon-btn"><img src="https://i.postimg.cc/BnmJqDv8/ytlogo.png" alt="YouTube"></a>
+    <a href="https://www.instagram.com/prohomework2z/" target="_blank" class="icon-btn"><img src="https://i.postimg.cc/Y0tbd4BP/Insta-Logo.png" alt="Instagram"></a>
+    <a href="https://dsc.gg/progs2z" target="_blank" class="icon-btn"><img src="https://i.postimg.cc/s28yWrS6/dclogo.png" alt="Discord"></a>
+  </div>
+
+  <div id="cursor-ring">
+    <div class="cursor-hand" id="hand-1"></div>
+    <div class="cursor-hand" id="hand-2"></div>
+  </div>
+  <div id="cursor-dot"></div>
+
+  <script>
+    // Quotes, typewriter-style
+    const quotes = [
+      "explore over 100+ games. i forgot to count so i think it is...",
+      "dive into a world of games.",
+      "click around and discover something new.",
+      "listen to your conscience.",
+      "your adventure starts after school.",
+      "please stop playing roblox.",
+      "honestly you've got like 6 hours, you're fine.",
+      "get ready to play i guess.",
+      "when is the next period?",
+      "get expelled, i dare you.",
+      "it's freeeee!!!!!",
+      "put at 75% zoom, pls.",
+      "granny 3!?",
+      "give up.",
+      "boo... easter egg (1 in 1000 chance).",
+      "the best game site ever. - no one"
+    ];
+
+    const quoteEl = document.getElementById('quote');
+    let typing = false;
+
+    function typeQuote(text){
+      if(typing) return;
+      typing = true;
+      let i = 0;
+      quoteEl.innerHTML = '';
+      const caret = document.createElement('span');
+      caret.className = 'caret';
+      const interval = setInterval(() => {
+        quoteEl.textContent = text.slice(0, i);
+        quoteEl.appendChild(caret);
+        i++;
+        if(i > text.length){
+          clearInterval(interval);
+          typing = false;
+          setTimeout(() => typeQuote(quotes[Math.floor(Math.random()*quotes.length)]), 3500);
+        }
+      }, 28);
+    }
+    setTimeout(() => typeQuote(quotes[Math.floor(Math.random()*quotes.length)]), 1200);
+
+    // Search handlers
+    function handleSearch(event){
+      if(event.key === 'Enter') handleSearchClick();
+    }
+    function handleSearchClick(){
+      const query = document.getElementById('search-bar').value;
+      window.open(`https://sites.google.com/search/prohomework2z?query=${encodeURIComponent(query)}`, '_blank');
+    }
+    function launchWebsite(){
+      window.open("https://sites.google.com/view/prohomework2z", "popup", "width=800,height=600");
+    }
+
+    // Battery indicator
+    function updateBattery(){
+      if(!navigator.getBattery){
+        document.getElementById('batteryPct').firstChild.textContent = 'N/A';
+        return;
+      }
+      navigator.getBattery().then(function(battery){
+        const level = Math.round(battery.level * 100);
+        const fill = document.getElementById('batteryLevel');
+        const pct = document.getElementById('batteryPct');
+        const bolt = document.getElementById('batteryBolt');
+        fill.style.width = level + '%';
+        pct.firstChild.textContent = level + '%';
+        bolt.textContent = battery.charging ? ' ⚡' : '';
+        fill.style.backgroundColor = level > 50 ? '#39ff6a' : level > 20 ? '#ffb020' : '#ff4d5e';
+      });
+    }
+    updateBattery();
+    setInterval(updateBattery, 5000);
+
+    // ==== Upgraded custom cursor: dot snaps instantly, ring eases behind, sparks trail on move ====
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+    let ringX = mouseX, ringY = mouseY;
+    let lastSpark = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
+
+      const now = performance.now();
+      if(now - lastSpark > 35){
+        lastSpark = now;
+        spawnSpark(mouseX, mouseY);
+      }
+    });
+
+    document.addEventListener('mousedown', () => ring.classList.add('active'));
+    document.addEventListener('mouseup', () => ring.classList.remove('active'));
+
+    // interactive elements get a bigger ring
+    document.querySelectorAll('a, button, input').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('active'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('active'));
+    });
+
+    function animateRing(){
+      ringX += (mouseX - ringX) * 0.5;
+      ringY += (mouseY - ringY) * 0.5;
+      ring.style.left = ringX + 'px';
+      ring.style.top = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    function spawnSpark(x, y){
+      const s = document.createElement('div');
+      s.className = 'spark';
+      const size = 2 + Math.random()*3;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 6 + Math.random()*10;
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
+      document.body.appendChild(s);
+      requestAnimationFrame(() => {
+        s.style.transition = 'transform .5s ease-out, opacity .5s ease-out';
+        s.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
+        s.style.opacity = '0';
+      });
+      setTimeout(() => s.remove(), 550);
+    }
+  </script>
+</body>
+</html>
+
+<body>
+	<style>
+		:root {
+			--primary-color: #00ff41;
+			--secondary-color: #39ff14;
+			--tertiary-color: #00ff00;
+			--background-dark: #000000;
+			--background-secondary: #000000;
+			--card-bg: rgba(0, 0, 0, 0.9);
+			--card-border: rgba(0, 255, 65, 0.3);
+			--card-hover: rgba(0, 0, 0, 0.95);
+			--text-color: #ffffff;
+			--text-secondary: #cccccc;
+			--glow-spread: 15px;
+		}
+
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+
+		body {
+			font-family: 'Rajdhani', sans-serif;
+			background: var(--background-dark);
+			color: var(--text-color);
+			min-height: 100vh;
+			overflow-x: hidden;
+			position: relative;
+		}
+
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+
+		header {
+			text-align: center;
+			margin-bottom: 3rem;
+			position: relative;
+		}
+
+
+		h1 {
+			font-family: "Comic Sans MS", "Comic Sans", cursive;
+			font-size: 3.5rem;
+			font-weight: 900;
+			letter-spacing: 4px;
+			margin-bottom: 1rem;
+			background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			text-shadow:
+				0 0 10px rgba(0, 255, 65, 0.5),
+				0 0 20px rgba(0, 255, 65, 0.3),
+				0 0 30px rgba(0, 255, 65, 0.1);
+			text-transform: uppercase;
+			animation: titleGlow 3s ease-in-out infinite alternate;
+		}
+
+
+		@keyframes titleGlow {
+			from {
+				filter: drop-shadow(0 0 5px rgba(0, 255, 65, 0.3));
+			}
+
+
+			to {
+				filter: drop-shadow(0 0 15px rgba(0, 255, 65, 0.6));
+			}
+		}
+
+
+		.subtitle {
+			font-size: 1.2rem;
+			font-weight: 300;
+			color: var(--text-secondary);
+			letter-spacing: 2px;
+			margin-bottom: 2rem;
+			text-transform: uppercase;
+		}
+
+
+		.grid-container {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+			gap: 1.5rem;
+			position: relative;
+			z-index: 1;
+		}
+
+
+		.card {
+			position: relative;
+			background: var(--card-bg);
+			border: 1px solid var(--card-border);
+			border-radius: 8px;
+			overflow: hidden;
+			transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			backdrop-filter: blur(5px);
+			box-shadow:
+				0 4px 15px rgba(0, 0, 0, 0.8),
+				inset 0 1px 0 rgba(0, 255, 65, 0.1);
+		}
+
+
+		.card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(45deg, transparent, rgba(0, 255, 65, 0.08), transparent);
+			transform: translateX(-100%);
+			transition: transform 0.6s ease;
+		}
+
+
+		.card:hover {
+			transform: translateY(-8px) scale(1.03);
+			box-shadow:
+				0 12px 30px rgba(0, 0, 0, 0.9),
+				0 0 var(--glow-spread) rgba(0, 255, 65, 0.6),
+				inset 0 1px 0 rgba(0, 255, 65, 0.3);
+			border-color: rgba(0, 255, 65, 0.8);
+			background: var(--card-hover);
+		}
+
+
+		.card:hover::before {
+			transform: translateX(100%);
+		}
+
+
+		.card a {
+			display: block;
+			padding: 1.5rem 1rem;
+			text-decoration: none;
+			color: var(--text-color);
+			font-family: "Comic Sans MS", "Comic Sans", cursive;
+			font-weight: 500;
+			font-size: 1rem;
+			letter-spacing: 1px;
+			text-align: center;
+			position: relative;
+			z-index: 1;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+		}
+
+
+		.card:hover a {
+			color: var(--primary-color);
+			text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+		}
+
+
+		.card::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 3px;
+			background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: transform 0.4s ease;
+			box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+		}
+
+
+		.card:hover::after {
+			transform: scaleX(1);
+		}
+
+
+		.particles {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 0;
+		}
+
+
+		.particle {
+			position: absolute;
+			width: 2px;
+			height: 2px;
+			background-color: var(--primary-color);
+			border-radius: 50%;
+			opacity: 0;
+			animation: float 15s infinite linear;
+			box-shadow: 0 0 6px var(--primary-color);
+		}
+
+
+		@keyframes float {
+			0% {
+				transform: translateY(0) translateX(0);
+				opacity: 0;
+			}
+
+
+			10% {
+				opacity: 1;
+			}
+
+
+			90% {
+				opacity: 1;
+			}
+
+
+			100% {
+				transform: translateY(-100vh) translateX(100px);
+				opacity: 0;
+			}
+		}
+
+
+		.scanline {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(to bottom, transparent, rgba(0, 255, 65, 0.04), transparent);
+			pointer-events: none;
+			animation: scanline 8s linear infinite;
+			opacity: 0.7;
+			z-index: 2;
+		}
+
+
+		@keyframes scanline {
+			0% {
+				transform: translateY(-100%);
+			}
+
+
+			100% {
+				transform: translateY(100%);
+			}
+		}
+
+
+		.grid-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image:
+				linear-gradient(rgba(0, 255, 65, 0.06) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(0, 255, 65, 0.06) 1px, transparent 1px);
+			background-size: 30px 30px;
+			pointer-events: none;
+			z-index: -1;
+		}
+
+
+		.matrix-rain {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 0;
+			opacity: 0.12;
+		}
+
+
+		.matrix-column {
+			position: absolute;
+			top: -100%;
+			color: var(--primary-color);
+			font-family: 'Orbitron', monospace;
+			font-size: 14px;
+			line-height: 1.2;
+			animation: matrixFall linear infinite;
+			text-shadow: 0 0 5px var(--primary-color);
+		}
+
+
+		@keyframes matrixFall {
+			to {
+				transform: translateY(100vh);
+			}
+		}
+
+		.glow-border {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border: 1px solid rgba(0, 255, 65, 0.1);
+			pointer-events: none;
+			z-index: -1;
+			box-shadow: inset 0 0 50px rgba(0, 255, 65, 0.02);
+		}
+
+
+		@media (max-width: 768px) {
+			h1 {
+				font-size: 2.5rem;
+			}
+
+
+			.grid-container {
+				grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+				gap: 1rem;
+			}
+
+
+			.card a {
+				padding: 1.2rem 0.8rem;
+				font-size: 0.9rem;
+			}
+		}
+
+
+		@media (max-width: 480px) {
+			h1 {
+				font-size: 2rem;
+			}
+
+
+			.container {
+				padding: 1rem;
+			}
+
+
+			.grid-container {
+				grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+			}
+		}
+
+		.subtitle::after {
+			content: '_';
+			color: var(--primary-color);
+			animation: blink 1s infinite;
+		}
+
+
+		@keyframes blink {
+
+
+			0%,
+			50% {
+				opacity: 1;
+			}
+
+
+			51%,
+			100% {
+				opacity: 0;
+			}
+		}
+
+		.ambient-glow {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			width: 200px;
+			height: 200px;
+			background: radial-gradient(circle, rgba(0, 255, 65, 0.03), transparent 70%);
+			transform: translate(-50%, -50%);
+			pointer-events: none;
+			z-index: -1;
+			animation: ambientPulse 6s ease-in-out infinite alternate;
+		}
+
+
+		@keyframes ambientPulse {
+			from {
+				transform: translate(-50%, -50%) scale(1);
+				opacity: 0.3;
+			}
+
+
+			to {
+				transform: translate(-50%, -50%) scale(1.5);
+				opacity: 0.1;
+			}
+		}
+	</style>
+
+
+
+
+	<div class="glow-border"></div>
+	<div class="ambient-glow"></div>
+	<div class="grid-overlay"></div>
+	<div class="scanline"></div>
+	<div class="particles" id="particles">
+		<div class="particle"
+			style="left: 32.3385%; top: 23.2257%; width: 3.77723px; height: 3.77723px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 11.3317px; animation: 13.0261s linear 2.87787s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 83.0293%; top: 75.9128%; width: 2.39457px; height: 2.39457px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 7.1837px; animation: 10.0021s linear 5.42868s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 75.9364%; top: 54.5962%; width: 1.8027px; height: 1.8027px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 5.40811px; animation: 20.2173s linear 4.03714s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 44.9912%; top: 55.3725%; width: 3.58272px; height: 3.58272px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 10.7481px; animation: 29.2537s linear 3.70215s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 84.5349%; top: 82.107%; width: 3.47683px; height: 3.47683px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 10.4305px; animation: 24.9087s linear 7.18136s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 35.3632%; top: 70.2108%; width: 1.8773px; height: 1.8773px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 5.6319px; animation: 15.2245s linear 8.89249s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 10.709%; top: 89.5594%; width: 2.7019px; height: 2.7019px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 8.1057px; animation: 15.7582s linear 0.0406664s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 4.55289%; top: 24.8543%; width: 1.28949px; height: 1.28949px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 3.86847px; animation: 21.4167s linear 0.773132s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 10.6775%; top: 87.9704%; width: 3.44598px; height: 3.44598px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 10.3379px; animation: 10.9003s linear 2.67661s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 68.7192%; top: 52.5142%; width: 1.05943px; height: 1.05943px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 3.17828px; animation: 26.6752s linear 8.50453s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 17.6727%; top: 24.4134%; width: 1.75039px; height: 1.75039px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 5.25117px; animation: 23.6524s linear 2.03729s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 15.9818%; top: 55.1049%; width: 2.30573px; height: 2.30573px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 6.9172px; animation: 29.6494s linear 9.32645s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 58.1955%; top: 35.861%; width: 1.57336px; height: 1.57336px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 4.72007px; animation: 18.1724s linear 8.23328s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 95.4607%; top: 86.8165%; width: 1.51185px; height: 1.51185px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 4.53556px; animation: 27.7096s linear 2.62422s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 73.4295%; top: 22.5092%; width: 1.53947px; height: 1.53947px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 4.61841px; animation: 28.6655s linear 2.35813s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 97.7534%; top: 30.2854%; width: 2.87544px; height: 2.87544px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 8.62631px; animation: 20.2459s linear 6.19705s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 93.8822%; top: 26.9579%; width: 1.48462px; height: 1.48462px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 4.45385px; animation: 19.9067s linear 2.14439s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 17.1839%; top: 79.4805%; width: 2.78296px; height: 2.78296px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 8.34889px; animation: 27.9763s linear 6.65068s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 48.7121%; top: 29.5668%; width: 2.57975px; height: 2.57975px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 7.73925px; animation: 21.0707s linear 2.03719s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 7.38798%; top: 71.691%; width: 2.56118px; height: 2.56118px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 7.68355px; animation: 18.594s linear 4.76987s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 75.5004%; top: 93.907%; width: 3.64681px; height: 3.64681px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 10.9404px; animation: 15.6118s linear 9.29791s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 8.38654%; top: 12.729%; width: 1.11386px; height: 1.11386px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 3.34157px; animation: 11.9853s linear 7.37292s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 19.7307%; top: 58.7628%; width: 3.70817px; height: 3.70817px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 11.1245px; animation: 12.7346s linear 6.49639s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 21.2262%; top: 83.3537%; width: 2.8622px; height: 2.8622px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 8.5866px; animation: 22.1111s linear 9.83915s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 31.6462%; top: 4.47169%; width: 2.38838px; height: 2.38838px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 7.16514px; animation: 28.4705s linear 4.45882s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 26.6695%; top: 13.2935%; width: 3.5552px; height: 3.5552px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 10.6656px; animation: 10.9884s linear 8.40461s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 98.6475%; top: 32.4578%; width: 2.43859px; height: 2.43859px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 7.31578px; animation: 20.4807s linear 9.13835s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 74.7723%; top: 83.1467%; width: 3.00421px; height: 3.00421px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 9.01262px; animation: 20.4499s linear 2.74747s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 14.4926%; top: 82.8891%; width: 3.69265px; height: 3.69265px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 11.078px; animation: 10.1999s linear 6.02047s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 72.3018%; top: 13.6231%; width: 2.58305px; height: 2.58305px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 7.74915px; animation: 25.1083s linear 1.45211s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 2.0346%; top: 58.9979%; width: 2.12785px; height: 2.12785px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 6.38354px; animation: 27.1562s linear 6.02863s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 30.4388%; top: 86.4994%; width: 2.74144px; height: 2.74144px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 8.22433px; animation: 21.2878s linear 1.86877s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 95.2932%; top: 56.6306%; width: 3.95137px; height: 3.95137px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 11.8541px; animation: 24.1428s linear 7.25098s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 34.8662%; top: 58.1327%; width: 3.11159px; height: 3.11159px; background-color: rgb(0, 255, 0); box-shadow: rgb(0, 255, 0) 0px 0px 9.33476px; animation: 11.7344s linear 3.87785s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 74.3974%; top: 94.4276%; width: 2.78792px; height: 2.78792px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 8.36376px; animation: 15.0596s linear 3.83266s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 36.7284%; top: 60.1241%; width: 2.27131px; height: 2.27131px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 6.81393px; animation: 13.7304s linear 5.06507s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 39.5857%; top: 59.9693%; width: 2.46538px; height: 2.46538px; background-color: rgb(50, 205, 50); box-shadow: rgb(50, 205, 50) 0px 0px 7.39615px; animation: 15.2117s linear 0.244288s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 7.31093%; top: 97.7734%; width: 1.8209px; height: 1.8209px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 5.4627px; animation: 16.0281s linear 5.42699s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 94.2104%; top: 69.554%; width: 3.51076px; height: 3.51076px; background-color: rgb(57, 255, 20); box-shadow: rgb(57, 255, 20) 0px 0px 10.5323px; animation: 25.5452s linear 6.21102s infinite normal none running float;">
+		</div>
+		<div class="particle"
+			style="left: 99.3624%; top: 14.9576%; width: 1.46944px; height: 1.46944px; background-color: rgb(0, 255, 65); box-shadow: rgb(0, 255, 65) 0px 0px 4.40833px; animation: 24.8141s linear 5.41157s infinite normal none running float;">
+		</div>
+	</div>
+	<div class="matrix-rain" id="matrix-rain">
+		<div class="matrix-column" style="left: 93.9186%; animation-duration: 11.2686s;">
+			T<br>G<br>テ<br>ヒ<br>ホ<br>ナ<br>Y<br>ヨ<br>タ<br>ネ<br>ク<br>ン<br>メ<br>ニ<br>ヒ<br>サ<br>ス<br>ム<br>G<br>エ<br>ト<br>Y<br>セ<br>ノ<br>ウ<br>ユ<br>ワ<br></div>
+			<div class="matrix-column" style="left: 19.6345%; animation-duration: 13.7749s;">
+				ナ<br>ハ<br>0<br>ル<br>ユ<br>ネ<br>タ<br>ム<br>Y<br>Y<br>ソ<br></div>
+				<div class="matrix-column" style="left: 3.91724%; animation-duration: 10.7627s;">
+					ワ<br>ケ<br>ヒ<br>オ<br>ラ<br>T<br>G<br>キ<br>ヨ<br>マ<br>Y<br>ム<br>ヲ<br>オ<br>ケ<br></div>
+					<div class="matrix-column" style="left: 46.5691%; animation-duration: 13.4543s;">
+						モ<br>ト<br>リ<br>ル<br>ニ<br>G<br>ヘ<br>1<br>レ<br>ス<br>ヘ<br>ミ<br>ヒ<br>T<br>エ<br>T<br>ヒ<br></div>
+						<div class="matrix-column" style="left: 3.94657%; animation-duration: 10.1904s;">
+							サ<br>ヲ<br>Y<br>ラ<br>テ<br>ヲ<br>ヘ<br>ヲ<br>ワ<br>T<br>0<br>Y<br>ハ<br>マ<br>ヒ<br>ノ<br>ロ<br>ン<br>リ<br>フ<br>ル<br>ハ<br>モ<br>シ<br>ス<br>ワ<br>メ<br></div>
+							<div class="matrix-column" style="left: 58.8753%; animation-duration: 12.4206s;">
+								キ<br>イ<br>ヌ<br>コ<br>ネ<br>ト<br>マ<br>ア<br>ト<br>ワ<br>ツ<br>ラ<br>シ<br>ヒ<br>キ<br>ム<br>A<br>ト<br>ウ<br>ク<br>ロ<br>イ<br>A<br>ク<br>ネ<br>1<br>フ<br>レ<br></div>
+								<div class="matrix-column" style="left: 88.1342%; animation-duration: 13.3162s;">
+									T<br>ソ<br>A<br>ネ<br>ヤ<br>メ<br>T<br>ケ<br>ヤ<br>ル<br>ネ<br>Y<br>メ<br>タ<br>ツ<br>ト<br>ニ<br>ン<br></div>
+									<div class="matrix-column" style="left: 59.4176%; animation-duration: 11.4807s;">
+										A<br>セ<br>タ<br>コ<br>T<br>ヤ<br>エ<br>タ<br>G<br>ヌ<br>レ<br>ユ<br>ク<br>ナ<br>ス<br>ニ<br>フ<br>ル<br>ワ<br>タ<br>ス<br>Y<br>ソ<br>テ<br>ミ<br></div>
+										<div class="matrix-column"
+											style="left: 39.4209%; animation-duration: 14.6496s;">
+											ミ<br>コ<br>ク<br>A<br>ウ<br>タ<br>ツ<br>ニ<br>ム<br>ナ<br>チ<br>ケ<br>ナ<br>タ<br>ロ<br>ン<br>コ<br>テ<br>0<br>ソ<br>ツ<br>T<br></div>
+											<div class="matrix-column"
+												style="left: 99.4686%; animation-duration: 6.7389s;">
+												ヘ<br>ヤ<br>オ<br>キ<br>コ<br>フ<br>ツ<br>イ<br>ハ<br>コ<br>ホ<br>カ<br>1<br>モ<br>カ<br>G<br>ヨ<br>ン<br>ケ<br>リ<br>ム<br>オ<br>ヌ<br>イ<br>ツ<br>ミ<br>チ<br>テ<br>コ<br></div>
+												<div class="matrix-column"
+													style="left: 73.5359%; animation-duration: 5.86283s;">
+													ネ<br>レ<br>ソ<br>テ<br>ア<br>イ<br>ウ<br>ウ<br>リ<br>セ<br>モ<br>ウ<br>モ<br>オ<br>フ<br>ヘ<br>メ<br>コ<br>ネ<br>ン<br>1<br>ト<br>ハ<br>ロ<br>A<br></div>
+													<div class="matrix-column"
+														style="left: 66.3012%; animation-duration: 7.71386s;">
+														ネ<br>ス<br>マ<br>メ<br>ネ<br>ノ<br>マ<br>キ<br>ヨ<br>レ<br>ス<br>1<br>ニ<br>ヤ<br>ラ<br>キ<br>Y<br>キ<br>ヘ<br></div>
+														<div class="matrix-column"
+															style="left: 83.882%; animation-duration: 9.98211s;">
+															フ<br>カ<br>ヘ<br>メ<br>テ<br>T<br>ヌ<br>キ<br>T<br>T<br>A<br></div>
+															<div class="matrix-column"
+																style="left: 38.3626%; animation-duration: 14.8419s;">
+																カ<br>Y<br>T<br>ウ<br>キ<br>ヲ<br>チ<br>Y<br>ル<br>タ<br>マ<br>コ<br>ロ<br>ホ<br>ユ<br>ノ<br>ヒ<br>ワ<br>ソ<br></div>
+																<div class="matrix-column"
+																	style="left: 33.8978%; animation-duration: 13.8389s;">
+																	0<br>カ<br>ヒ<br>キ<br>A<br>ネ<br>ホ<br>キ<br>キ<br>Y<br>0<br>0<br>ヲ<br>ヌ<br>ホ<br>ム<br>T<br>ス<br>0<br>G<br>ト<br></div>
+																	<div class="matrix-column"
+																		style="left: 83.999%; animation-duration: 12.4912s;">
+																		ニ<br>G<br>フ<br>エ<br>リ<br>ヘ<br>フ<br>ヒ<br>ス<br>T<br>ノ<br>T<br>ヌ<br>エ<br>ミ<br>ウ<br>ホ<br>エ<br>ツ<br>セ<br>ト<br>ト<br>ヌ<br>A<br>ヲ<br></div>
+																		<div class="matrix-column"
+																			style="left: 37.725%; animation-duration: 12.7503s;">
+																			サ<br>タ<br>0<br>ホ<br>ヌ<br>ル<br>ヤ<br>マ<br>ヌ<br>ミ<br>Y<br>コ<br>ヘ<br>ヘ<br>キ<br>エ<br>G<br>フ<br>ソ<br>コ<br>テ<br>Y<br>ヨ<br></div>
+																			<div class="matrix-column"
+																				style="left: 93.1453%; animation-duration: 13.7919s;">
+																				ソ<br>ラ<br>T<br>チ<br>ア<br>セ<br>ヒ<br>ム<br>ソ<br>オ<br>モ<br>ウ<br>レ<br>エ<br>モ<br>ツ<br></div>
+																				<div class="matrix-column"
+																					style="left: 16.9923%; animation-duration: 14.2193s;">
+																					ト<br>コ<br>Y<br>ス<br>ヲ<br>ア<br>ス<br>フ<br>ト<br>キ<br>1<br>ヒ<br>モ<br>ヌ<br>ワ<br>ト<br>シ<br>ヤ<br>セ<br>メ<br>キ<br>ラ<br>ハ<br>テ<br></div>
+																					<div class="matrix-column"
+																						style="left: 80.7382%; animation-duration: 9.42043s;">
+																						ホ<br>ヲ<br>ワ<br>ヨ<br>メ<br>ソ<br>ロ<br>メ<br>ハ<br>コ<br>ヤ<br>エ<br>モ<br>レ<br>Y<br>ア<br>ヌ<br>ヒ<br>メ<br>ニ<br>1<br>0<br>ワ<br>オ<br></div>
+																						<div class="matrix-column"
+																							style="left: 86.1392%; animation-duration: 9.29805s;">
+																							ノ<br>ヲ<br>ル<br>ヌ<br>フ<br>ニ<br>マ<br>イ<br>ア<br>ト<br>G<br>シ<br>リ<br>カ<br>タ<br>タ<br>ヤ<br>ホ<br>マ<br>ス<br>T<br>ト<br>ヒ<br></div>
+																							<div class="matrix-column"
+																								style="left: 40.8191%; animation-duration: 11.0379s;">
+																								ヤ<br>ト<br>ヤ<br>テ<br>ラ<br>T<br>ス<br>0<br>G<br>ネ<br>ソ<br>ロ<br>ハ<br>マ<br>ル<br>カ<br>ヲ<br>ツ<br>テ<br>Y<br>チ<br>ロ<br>ス<br>ミ<br>キ<br></div>
+																								<div class="matrix-column"
+																									style="left: 50.2965%; animation-duration: 6.28507s;">
+																									リ<br>ヤ<br>ニ<br>ツ<br>チ<br>1<br>レ<br>1<br>メ<br>ヨ<br>ロ<br>コ<br>ニ<br>タ<br>ヲ<br></div>
+																									<div class="matrix-column"
+																										style="left: 52.6645%; animation-duration: 8.27819s;">
+																										ト<br>A<br>リ<br>サ<br>タ<br>ク<br>1<br>フ<br>Y<br>フ<br>ム<br></div>
+																										<div class="matrix-column"
+																											style="left: 35.4784%; animation-duration: 10.3838s;">
+																											チ<br>ノ<br>エ<br>ル<br>ラ<br>タ<br>ノ<br>ヲ<br>ヌ<br>シ<br>フ<br>ロ<br>ム<br>ツ<br>コ<br>ミ<br></div>
+																											<div class="matrix-column"
+																												style="left: 93.1511%; animation-duration: 11.0017s;">
+																												リ<br>シ<br>ス<br>リ<br>ヲ<br>ハ<br>ヤ<br>フ<br>Y<br>A<br>ナ<br>ワ<br>マ<br>ケ<br>ン<br>マ<br>ロ<br>リ<br>ソ<br>ス<br>ヤ<br>フ<br>ヨ<br>A<br></div>
+																												<div class="matrix-column"
+																													style="left: 36.1512%; animation-duration: 9.99868s;">
+																													キ<br>ノ<br>ア<br>A<br>ニ<br>ミ<br>ナ<br>ル<br>ヘ<br>フ<br>A<br>ネ<br>チ<br>ト<br>ホ<br>コ<br>マ<br>ネ<br>ナ<br>マ<br>ハ<br>ホ<br>キ<br>ウ<br>ス<br>ム<br>1<br>ル<br></div>
+																													<div class="matrix-column"
+																														style="left: 98.1867%; animation-duration: 10.4456s;">
+																														ト<br>ノ<br>マ<br>ロ<br>T<br>フ<br>ル<br>オ<br>ラ<br>シ<br>ト<br>シ<br>キ<br>ヲ<br>コ<br>ヨ<br>ラ<br>ニ<br></div>
+																														<div class="matrix-column"
+																															style="left: 12.1677%; animation-duration: 13.8971s;">
+																															ウ<br>モ<br>ト<br>ム<br>ア<br>G<br>T<br>ミ<br>ケ<br>ソ<br>タ<br>ヲ<br>ミ<br>ス<br>サ<br>ニ<br>ヲ<br>ヒ<br>ウ<br>ヘ<br></div>
+
+
+																															<script>
+																																const particlesContainer = document.getElementById('particles');
+    const particleCount = 40;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      
+      const posX = Math.random() * 100;
+      const posY = Math.random() * 100;
+      particle.style.left = `${posX}%`;
+      particle.style.top = `${posY}%`;
+      
+      const size = Math.random() * 3 + 1;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+
+      const greenShades = ['#00ff41', '#39ff14', '#00ff00', '#32cd32'];
+      const color = greenShades[Math.floor(Math.random() * greenShades.length)];
+      particle.style.backgroundColor = color;
+      particle.style.boxShadow = `0 0 ${size * 3}px ${color}`;
+
+      const duration = Math.random() * 20 + 10;
+      const delay = Math.random() * 10;
+      particle.style.animation = `float ${duration}s ${delay}s infinite linear`;
+      
+      particlesContainer.appendChild(particle);
+    }
+
+
+    const matrixContainer = document.getElementById('matrix-rain');
+    const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンBBL';
+    
+    function createMatrixColumn() {
+      const column = document.createElement('div');
+      column.classList.add('matrix-column');
+      
+      column.style.left = Math.random() * 100 + '%';
+      
+      let text = '';
+      const length = Math.random() * 20 + 10;
+      for (let i = 0; i < length; i++) {
+        text += matrixChars[Math.floor(Math.random() * matrixChars.length)] + '<br>';
+      }
+      column.innerHTML = text;
+      
+      const duration = Math.random() * 10 + 5;
+      column.style.animationDuration = duration + 's';
+      
+      matrixContainer.appendChild(column);
+      
+      setTimeout(() => {
+        if (column.parentNode) {
+          column.parentNode.removeChild(column);
+        }
+      }, duration * 1000);
+    }
+
+
+    setInterval(createMatrixColumn, 300);
+
+
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const randomDelay = Math.random() * 0.2;
+        card.style.transitionDelay = `${randomDelay}s`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transitionDelay = '0s';
+      });
+    });
+																															</script>
+																															<script
+																																src="/assets/js/panic-core.js"
+																																defer="">
+																															</script>
+
+
+
+
+</body>
