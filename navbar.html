@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>home</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg: #04080a;
+    --panel: #060f0c;
+    --panel-line: #16382a;
+    --neon: #39ff6a;
+    --neon-dim: #1c8a45;
+    --neon-glow: rgba(57,255,106,0.55);
+    --amber: #ffb020;
+    --red: #ff4d5e;
+    --text-dim: #8fae9a;
+    --text: #d9ffe6;
+    --nav-width: 76px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body, html{
+    margin:0; padding:0; width:100%; height:100%;
+    background: var(--bg);
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  #overlay{
+    position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  }
+
+  #side-nav{
+    position: fixed;
+    top: 0; left: 0;
+    height: 100%;
+    width: var(--nav-width);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 0;
+    background: linear-gradient(180deg, rgba(6,20,14,0.92), rgba(4,10,8,0.96));
+    border-right: 1px solid var(--panel-line);
+    box-shadow: 0 0 40px -14px rgba(0,0,0,0.9), inset -1px 0 0 rgba(57,255,106,0.04);
+  }
+  .nav-brand{
+    width: 34px; height: 34px;
+    margin-bottom: 26px;
+    border-radius: 8px;
+    border: 1px solid var(--neon-dim);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 0 14px -2px var(--neon-glow);
+    flex-shrink: 0;
+  }
+  .nav-brand img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .nav-links{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex: 1;
+  }
+  .nav-link{
+    position: relative;
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: .2s ease;
+  }
+  .nav-link svg{
+    width: 20px; height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: .2s ease;
+  }
+  .nav-link:hover, .nav-link.active{
+    color: var(--neon);
+    border-color: var(--neon-dim);
+    background: rgba(57,255,106,0.08);
+    box-shadow: 0 0 16px -4px var(--neon-glow);
+    transform: translateX(2px);
+  }
+  .nav-link .nav-tip{
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    white-space: nowrap;
+    background: rgba(4,10,8,0.95);
+    border: 1px solid var(--panel-line);
+    color: var(--neon);
+    font-size: 11px;
+    letter-spacing: .06em;
+    padding: 5px 9px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .nav-link:hover .nav-tip{
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  .nav-foot{
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon-glow);
+    animation: blink 2s steps(1) infinite;
+  }
+
+  main{
+    position: relative; z-index: 2;
+    width: 100%; height: 100%;
+    padding-left: var(--nav-width);
+  }
+
+  #content-frame{
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--bg);
+  }
+
+  @keyframes bootIn{
+    from{ opacity:0; transform: translateY(14px) scale(.98); filter: blur(4px); }
+    to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  #settings-overlay{
+    position: fixed;
+    top: 0; left: var(--nav-width);
+    width: calc(100% - var(--nav-width));
+    height: 100%;
+    z-index: 15;
+    background: rgba(2,6,4,0.75);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center; justify-content: center;
+  }
+  #settings-overlay.open{ display: flex; }
+  #settings-panel{
+    width: min(440px, 90vw);
+    max-height: 82vh;
+    overflow-y: auto;
+    background: linear-gradient(180deg, rgba(6,20,14,0.97), rgba(4,10,8,0.98));
+    border: 1px solid var(--panel-line);
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px rgba(57,255,106,0.06), 0 30px 80px -20px rgba(0,0,0,0.9), 0 0 60px -10px var(--neon-glow);
+    animation: bootIn .4s cubic-bezier(.2,.9,.25,1) both;
+  }
+  .settings-header{
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--panel-line);
+    background: rgba(0,0,0,0.35);
+  }
+  .settings-title{
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    letter-spacing: .1em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .settings-close{
+    margin-left: auto;
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--panel-line);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: .2s;
+  }
+  .settings-close:hover{
+    color: var(--red);
+    border-color: var(--red);
+  }
+  .settings-body{
+    padding: 16px;
+    display: flex; flex-direction: column;
+    gap: 18px;
+  }
+  .settings-group{
+    display: flex; flex-direction: column;
+    gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--panel-line);
+  }
+  .settings-group:last-child{
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .settings-label{
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--neon-dim);
+    text-transform: uppercase;
+  }
+  .settings-row{
+    display: flex;
+    gap: 8px;
+  }
+  .settings-input{
+    flex: 1;
+    border-radius: 6px;
+    padding: 9px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    border: 1px solid var(--panel-line);
+    background: rgba(0,0,0,0.35);
+    color: var(--text);
+    outline: none;
+    cursor: text;
+    transition: .2s;
+  }
+  .settings-input::placeholder{ color: #3f6653; }
+  .settings-input:hover, .settings-input:focus{
+    border-color: var(--neon-dim);
+    box-shadow: 0 0 0 3px rgba(57,255,106,0.1);
+  }
+  .settings-btn{
+    border-radius: 6px;
+    padding: 0 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .06em;
+    background: rgba(57,255,106,0.1);
+    border: 1px solid var(--neon-dim);
+    color: var(--neon);
+    cursor: pointer;
+    transition: .2s;
+    white-space: nowrap;
+  }
+  .settings-btn:hover{
+    background: var(--neon);
+    color: #04140a;
+    box-shadow: 0 0 16px var(--neon-glow);
+  }
+  .settings-hint{
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .settings-toggle-row{
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .toggle-switch{
+    width: 38px; height: 20px;
+    border-radius: 999px;
+    border: 1px solid var(--panel-line);
+    background: rgba(0,0,0,0.4);
+    position: relative;
+    cursor: pointer;
+    transition: .2s;
+    flex-shrink: 0;
+  }
+  .toggle-switch::before{
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    transition: .2s;
+  }
+  .toggle-switch.on{
+    border-color: var(--neon-dim);
+    background: rgba(57,255,106,0.15);
+  }
+  .toggle-switch.on::before{
+    left: 20px;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon-glow);
+  }
+  .settings-status{
+    font-size: 10px;
+    color: var(--neon);
+    min-height: 14px;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .settings-status.show{ opacity: 1; }
+
+  @media (max-width: 520px){
+    :root{ --nav-width: 56px; }
+    .nav-link{ width: 38px; height: 38px; }
+    .nav-link svg{ width: 17px; height: 17px; }
+    .nav-brand{ width: 28px; height: 28px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="overlay"></div>
+
+  <!-- === Left icon nav bar === -->
+  <nav id="side-nav">
+    <div class="nav-brand">
+      <img src="https://i.postimg.cc/X7sqC9xR/PFP.png" alt="Logo" id="brand-logo">
+    </div>
+    <div class="nav-links">
+      <a class="nav-link active" href="#" data-src="home.html" title="Home">
+        <span class="nav-tip">Home</span>
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 9.8V19a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V19a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1V9.8"/></svg>
+      </a>
+      <a class="nav-link" href="#" data-src="gms.html" title="Games">
+        <span class="nav-tip">Games</span>
+        <svg viewBox="0 0 24 24"><path d="M6 12h4M8 10v4M15.5 13.5h.01M18 11.5h.01"/><path d="M4 8h16a2 2 0 0 1 2 2.4l-1.4 7A2 2 0 0 1 18.6 19H17l-1.6-2.4a2 2 0 0 0-1.66-.9H10.26a2 2 0 0 0-1.66.9L7 19H5.4a2 2 0 0 1-2-1.6l-1.4-7A2 2 0 0 1 4 8Z"/></svg>
+      </a>
+      <a class="nav-link" href="#" data-src="apps.html" title="Apps">
+        <span class="nav-tip">Apps</span>
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg>
+      </a>
+      <a class="nav-link" href="#" data-src="movies.html" title="Movies">
+        <span class="nav-tip">Movies</span>
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M17 9h4M3 15h4M17 15h4"/></svg>
+      </a>
+      <a class="nav-link" href="#settings" id="settings-link" title="Settings">
+        <span class="nav-tip">Settings</span>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+      </a>
+    </div>
+    <div class="nav-foot"></div>
+  </nav>
+
+  <!-- === Settings modal === -->
+  <div id="settings-overlay">
+    <div id="settings-panel">
+      <div class="settings-header">
+        <span class="settings-title">// site settings</span>
+        <button class="settings-close" id="settings-close">✕</button>
+      </div>
+      <div class="settings-body">
+
+        <div class="settings-group">
+          <span class="settings-label">Favicon URL</span>
+          <div class="settings-row">
+            <input type="text" class="settings-input" id="favicon-input" placeholder="https://example.com/icon.png">
+            <button class="settings-btn" id="favicon-apply">APPLY</button>
+          </div>
+          <span class="settings-hint">Paste a direct image link to swap the little icon in the browser tab.</span>
+        </div>
+
+        <div class="settings-group">
+          <span class="settings-label">Tab Name</span>
+          <div class="settings-row">
+            <input type="text" class="settings-input" id="title-input" placeholder="e.g. Google Classroom">
+            <button class="settings-btn" id="title-apply">APPLY</button>
+          </div>
+          <span class="settings-hint">Renames this browser tab's title.</span>
+        </div>
+
+        <div class="settings-group">
+          <span class="settings-label">Open Popup</span>
+          <div class="settings-row">
+            <input type="text" class="settings-input" id="popup-input" placeholder="https://...">
+            <button class="settings-btn" id="popup-apply">OPEN</button>
+          </div>
+          <span class="settings-hint">Opens the URL above in a small separate popup window. Leave blank to use the default launch link.</span>
+        </div>
+
+        <div class="settings-group">
+          <span class="settings-label">Panic Button</span>
+          <div class="settings-toggle-row">
+            <span class="settings-hint">Enable panic key</span>
+            <div class="toggle-switch" id="panic-toggle"></div>
+          </div>
+          <div class="settings-row">
+            <input type="text" class="settings-input" id="panic-key-input" placeholder="Key (e.g. Escape)" maxlength="20">
+            <input type="text" class="settings-input" id="panic-url-input" placeholder="Redirect URL">
+          </div>
+          <span class="settings-hint">While enabled, pressing the key instantly redirects this tab to the URL above.</span>
+        </div>
+
+        <div class="settings-status" id="settings-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <iframe id="content-frame" src="home.html" title="Site content"></iframe>
+  </main>
+
+  <script>
+    function launchWebsite(){
+      window.open("https://sites.google.com/view/prohomework2z", "popup", "width=800,height=600");
+    }
+
+    // Nav: clicking a link with data-src swaps the content iframe instead of
+    // leaving the page, so the sidebar/clock/settings stay put and visible.
+    const contentFrame = document.getElementById('content-frame');
+    document.querySelectorAll('.nav-link[data-src]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('data-src');
+        if(contentFrame.getAttribute('src') !== target){
+          contentFrame.setAttribute('src', target);
+        }
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        closeSettings();
+      });
+    });
+
+    // ==== Settings modal ====
+    const settingsLink = document.getElementById('settings-link');
+    const settingsOverlay = document.getElementById('settings-overlay');
+    const settingsClose = document.getElementById('settings-close');
+    const settingsStatus = document.getElementById('settings-status');
+
+    function flashStatus(msg){
+      settingsStatus.textContent = msg;
+      settingsStatus.classList.add('show');
+      clearTimeout(flashStatus._t);
+      flashStatus._t = setTimeout(() => settingsStatus.classList.remove('show'), 2200);
+    }
+
+    function openSettings(e){
+      if(e) e.preventDefault();
+      settingsOverlay.classList.add('open');
+      settingsLink.classList.add('active');
+    }
+    function closeSettings(){
+      settingsOverlay.classList.remove('open');
+      settingsLink.classList.remove('active');
+    }
+    settingsLink.addEventListener('click', openSettings);
+    settingsClose.addEventListener('click', closeSettings);
+    settingsOverlay.addEventListener('click', (e) => {
+      if(e.target === settingsOverlay) closeSettings();
+    });
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && settingsOverlay.classList.contains('open') && !panicEnabled) closeSettings();
+    });
+
+    // -- Favicon --
+    document.getElementById('favicon-apply').addEventListener('click', () => {
+      const url = document.getElementById('favicon-input').value.trim();
+      if(!url){ flashStatus('Enter a favicon URL first.'); return; }
+      let link = document.querySelector("link[rel~='icon']");
+      if(!link){
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = url;
+      flashStatus('Favicon updated.');
+    });
+
+    // -- Tab title --
+    document.getElementById('title-apply').addEventListener('click', () => {
+      const val = document.getElementById('title-input').value.trim();
+      if(!val){ flashStatus('Enter a tab name first.'); return; }
+      document.title = val;
+      flashStatus('Tab name updated.');
+    });
+
+    // -- Popup --
+    document.getElementById('popup-apply').addEventListener('click', () => {
+      const val = document.getElementById('popup-input').value.trim();
+      const url = val || 'https://sites.google.com/view/prohomework2z';
+      window.open(url, 'popup', 'width=800,height=600');
+      flashStatus('Popup opened.');
+    });
+
+    // -- Panic button --
+    let panicEnabled = false;
+    let panicKey = 'Escape';
+    let panicUrl = 'https://classroom.google.com/';
+    const panicToggle = document.getElementById('panic-toggle');
+    const panicKeyInput = document.getElementById('panic-key-input');
+    const panicUrlInput = document.getElementById('panic-url-input');
+    panicKeyInput.value = panicKey;
+    panicUrlInput.value = panicUrl;
+
+    panicToggle.addEventListener('click', () => {
+      panicEnabled = !panicEnabled;
+      panicToggle.classList.toggle('on', panicEnabled);
+      flashStatus(panicEnabled ? 'Panic key enabled.' : 'Panic key disabled.');
+    });
+    panicKeyInput.addEventListener('change', () => {
+      panicKey = panicKeyInput.value.trim() || 'Escape';
+    });
+    panicUrlInput.addEventListener('change', () => {
+      panicUrl = panicUrlInput.value.trim() || 'https://classroom.google.com/';
+    });
+    document.addEventListener('keydown', (e) => {
+      if(!panicEnabled) return;
+      if(e.key.toLowerCase() === panicKey.toLowerCase()){
+        window.location.href = panicUrl;
+      }
+    });
+
+  </script>
+</body>
+</html>
