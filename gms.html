@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>gs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#030b07;
+  --glass:rgba(7,32,20,.5);
+  --line:rgba(64,214,140,.22);
+  --line-strong:rgba(64,214,140,.55);
+  --accent:#28d17c;
+  --accent-bright:#7cf7b4;
+  --accent-deep:#0a8f4a;
+  --text:#d8fbe9;
+  --text-dim:#6f9c86;
+  --star:#f6cf4b;
+  --radius:18px;
+  --font-display:"Press Start 2P", monospace;
+  --font-body:"Space Grotesk", sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-body);}
+::selection{background:var(--accent-deep);color:#04140b;}
+body{
+  min-height:100vh;
+  color:var(--text);
+  background-image:
+    linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)),
+    url("https://i.postimg.cc/wMC4mCq6/WP.gif");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  padding-bottom:60px;
+  position:relative;
+  overflow-x:hidden;
+}
+a{color:inherit;}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px;position:relative;z-index:3;}
+
+header.top{padding-top:22px;}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
+.brand{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-display);
+  font-size:15px;
+  letter-spacing:1px;
+  color:var(--accent-bright);
+  text-shadow:0 0 18px rgba(124,247,180,.45);
+}
+.brand .dot{
+  width:10px;height:10px;border-radius:2px;
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent), 0 0 22px var(--accent-deep);
+  animation:blink 1.4s steps(2) infinite;
+}
+@keyframes blink{50%{opacity:.15;}}
+.terminal{
+  font-family:"Space Grotesk", monospace;
+  font-size:12.5px;
+  color:var(--text-dim);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.terminal .cursor{
+  width:7px;height:14px;background:var(--accent);
+  animation:blink 1s steps(2) infinite;
+}
+
+.toolbar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:14px;
+  background:var(--glass);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:0 10px 34px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.03);
+}
+.searchbox{
+  flex:1 1 220px;
+  position:relative;
+  min-width:180px;
+}
+.searchbox svg{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;stroke:var(--text-dim);
+  pointer-events:none;
+}
+#search{
+  width:100%;
+  padding:11px 12px 11px 36px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:rgba(3,16,10,.65);
+  color:var(--text);
+  outline:none;
+  font-size:14px;
+  transition:border-color .15s, box-shadow .15s;
+}
+#search::placeholder{color:var(--text-dim);}
+#search:focus{border-color:var(--line-strong);box-shadow:0 0 0 3px rgba(40,209,124,.15);}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{
+  padding:9px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(3,16,10,.5);
+  color:var(--text-dim);
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .15s;
+}
+.chip:hover{border-color:var(--line-strong);color:var(--text);}
+.chip.active{
+  background:var(--accent-deep);
+  color:#04140b;
+  border-color:var(--accent);
+  box-shadow:0 0 14px rgba(40,209,124,.4);
+}
+
+#counterBox{
+  padding:11px 16px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:rgba(3,16,10,.65);
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--accent-bright);
+  min-width:96px;
+  text-align:center;
+  white-space:nowrap;
+}
+
+
+.recent{margin-top:18px;}
+.recent h2{
+  font-size:11.5px;
+  color:var(--text-dim);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  font-weight:600;
+}
+.recent-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;}
+.recent-row::-webkit-scrollbar{height:6px;}
+.recent-row::-webkit-scrollbar-thumb{background:var(--accent-deep);border-radius:6px;}
+.rchip{
+  flex:0 0 auto;
+  display:flex;align-items:center;gap:8px;
+  padding:7px 12px 7px 7px;
+  border-radius:999px;
+  background:var(--glass);
+  border:1px solid var(--line);
+  cursor:pointer;
+  font-size:12.5px;
+  transition:border-color .15s, transform .15s;
+}
+.rchip:hover{border-color:var(--line-strong);transform:translateY(-2px);}
+.rchip img{width:24px;height:24px;border-radius:6px;object-fit:cover;}
+
+
+.grid{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(158px, 1fr));
+  gap:16px;
+}
+.card{
+  position:relative;
+  cursor:pointer;
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--glass);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);
+  box-shadow:0 8px 22px rgba(0,0,0,.4);
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  opacity:0;
+  transform:translateY(10px);
+  animation:rise .4s ease forwards;
+}
+@keyframes rise{to{opacity:1;transform:translateY(0);}}
+.card:hover, .card:focus-within{
+  transform:translateY(-5px) scale(1.025);
+  border-color:var(--line-strong);
+  box-shadow:0 0 0 1px var(--line-strong), 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(40,209,124,.28);
+}
+.card:focus-within{outline:2px solid var(--accent-bright);outline-offset:2px;}
+.thumbwrap{position:relative;width:100%;padding-top:100%;overflow:hidden;}
+.thumb{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  transition:transform .35s ease;
+}
+.card:hover .thumb{transform:scale(1.08);}
+.thumbwrap::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, transparent 45%, rgba(2,12,7,.85) 100%);
+}
+.tag{
+  position:absolute;top:8px;left:8px;z-index:2;
+  font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  padding:4px 8px;border-radius:6px;
+  background:rgba(3,16,10,.72);
+  border:1px solid var(--line);
+  color:var(--accent-bright);
+}
+.fav{
+  position:absolute;top:6px;right:6px;z-index:3;
+  width:28px;height:28px;border-radius:8px;
+  border:1px solid transparent;
+  background:rgba(3,16,10,.55);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  color:var(--text-dim);
+  transition:color .15s, transform .1s, background .15s;
+}
+.fav:hover{background:rgba(3,16,10,.8);transform:scale(1.08);}
+.fav.on{color:var(--star);}
+.fav svg{width:15px;height:15px;}
+.card-title{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  padding:9px 10px;
+  font-size:12.5px;font-weight:600;
+  color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:6px;
+}
+.card-title .play{
+  opacity:0;transform:translateX(-4px);
+  transition:opacity .15s, transform .15s;
+  color:var(--accent-bright);
+  font-size:11px;flex:0 0 auto;
+}
+.card:hover .card-title .play{opacity:1;transform:translateX(0);}
+.card.hide{display:none;}
+
+
+.empty{
+  display:none;
+  text-align:center;
+  padding:70px 20px;
+  color:var(--text-dim);
+}
+.empty.show{display:block;}
+.empty .glyph{font-family:var(--font-display);font-size:22px;color:var(--accent);margin-bottom:14px;}
+.empty p{font-size:13.5px;margin-bottom:16px;}
+.empty button{
+  padding:10px 18px;border-radius:10px;border:1px solid var(--line-strong);
+  background:var(--accent-deep);color:#04140b;font-weight:700;font-size:12.5px;cursor:pointer;
+}
+
+footer{
+  margin-top:34px;text-align:center;color:var(--text-dim);font-size:11.5px;
+  position:relative;z-index:3;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brandrow">
+      <div class="brand"><span class="dot"></span>GAM3S</div>
+      <div class="terminal">ProGS2Z.xyz--test<span class="cursor"></span></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="searchbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="search" type="text" placeholder="Search games..." aria-label="Search games">
+      </div>
+      <div class="chips" id="chips"></div>
+      <div id="counterBox">0 games</div>
+    </div>
+
+    <div class="recent" id="recentSection" style="display:none;">
+      <h2>Continue playing</h2>
+      <div class="recent-row" id="recentRow"></div>
+    </div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+  <div class="empty" id="empty">
+    <div class="glyph">¯\_(ツ)_/¯</div>
+    <p>Nothing matches that search.</p>
+    <button id="resetBtn">Clear Searcg</button>
+  </div>
+
+  <footer>PROGS2Z — <span id="footCount">0</span> games loaded</footer>
+</div>
+
+<script>
+const GAMES = [
+  { title: "-b", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/-b.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/-b.png", category: "Arcade" },
+  { title: "1", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/1.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/1.png", category: "Arcade" },
+  { title: "1 on 1 Soccer", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/1soccer.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/1soccer.png", category: "Sports" },
+  { title: "1 on 1 Tennis", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/1tennis.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/1tennis.png", category: "Sports" },
+  { title: "1v1.LOL", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/1v1.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/1v1.png", category: "Arcade" },
+  { title: "60s Santa Run", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/60santa.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/60santa.png", category: "Arcade" },
+  { title: "60s Burger Run", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/60sec.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/60sec.png", category: "Arcade" },
+  { title: "8 Ball Pool", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/8ballpool.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/8ballpool.png", category: "Sports" },
+  { title: "Achievement Unlocked", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/achunlocked.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/achunlocked.png", category: "Arcade" },
+  { title: "Achievement Unlocked 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/achunlocked2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/achunlocked2.png", category: "Arcade" },
+  { title: "Achievement Unlocked 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/achunlocked3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/achunlocked3.png", category: "Arcade" },
+  { title: "Amanda the Adventurer", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ata.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/amandathead.png", category: "Horror" },
+  { title: "Among Us", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/amongus.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/amongus.png", category: "Multiplayer" },
+  { title: "Angry Bird", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/angrybird.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/angrybird.png", category: "Arcade" },
+  { title: "Aquapark.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/aquapark-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/aquapark.png", category: "Racing" },
+  { title: "Amazing Strange Rope Police", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/asrp.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/asrp.png", category: "Action" },
+  { title: "A Small World Cup", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/aswc.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/aswc.png", category: "Sports" },
+  { title: "Backrooms", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/backrooms.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/backrooms.png", category: "Horror" },
+  { title: "Backrooms 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/backrooms2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/backrooms2.png", category: "Horror" },
+  { title: "Backrooms 2D", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/br2d.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/br2d.png", category: "Horror" },
+  { title: "Bacon May Die", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/baconmay.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/baconmay.png", category: "Action" },
+  { title: "Bad Ice Cream", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/badicecream.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/badicecream.png", category: "Puzzle" },
+  { title: "Bad Ice Cream 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/badicecream2-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/badicecream2.png", category: "Puzzle" },
+  { title: "Bad Ice Cream 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/badicecream3-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/badicecream3.png", category: "Puzzle" },
+  { title: "Bad Parenting", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/badparenting.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/badparenting.png", category: "Horror" },
+  { title: "Baldi's Basic", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/baldi.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/baldi.png", category: "Horror" },
+  { title: "Back flipper", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/backflipper-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/backflipper.png", category: "Sports" },
+  { title: "Bank Robbery 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bankrobbery.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bankrobbery.png", category: "Action" },
+  { title: "Baseball Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/baseballbros.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/baseballbros.png", category: "Sports" },
+  { title: "Basketball Stars", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/basketballstars.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/basketballstars.png", category: "Sports" },
+  { title: "Basket Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/basketbros-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/basketbros.png", category: "Sports" },
+  { title: "Basket Random", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/basketrandom.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/basketrandom.png", category: "Sports" },
+  { title: "Bendy and the Ink Machine", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bendy.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bendys.png", category: "Horror" },
+  { title: "BitLife", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bitlife.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bitlife.png", category: "Simulation" },
+  { title: "Bitplane", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bitplanes-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bitplanes.png", category: "Arcade" },
+  { title: "Blackjack", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/blackjack.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/blackjack.png", category: "Casino" },
+  { title: "Block Blast", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/blockblast.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/blockblast.png", category: "Puzzle" },
+  { title: "Bloxorz", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bloxorz.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bloxorz.png", category: "Puzzle" },
+  { title: "Bob The Robber", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bob.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bob.png", category: "Action" },
+  { title: "Bowmaster", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bowmaster.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bowmaster.png", category: "Action" },
+  { title: "Boxing Random", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/boxingrandom.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/boxingrandom.png", category: "Sports" },
+  { title: "Brawl Stars", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/brawlstars.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/brawlstars.png", category: "Action" },
+  { title: "Bloons TD 1", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/btd1.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/btd1.png", category: "Strategy" },
+  { title: "Boat Racing", url: "https://cdn.jsdelivr.net/gh/createzalma6z/zeplingo@main/g.xml", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/boatracing.png", category: "Racing" },
+  { title: "Break it all", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/breakitall.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/breakitall.png", category: "Arcade" },
+  { title: "Bubble Shooter", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bubbleshooter.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bubbleshooter.png", category: "Puzzle" },
+  { title: "Buckshot Roulette", url: "https://cdn.jsdelivr.net/gh/schoolflashx/t7575@main/1.xml", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/buckshotroulette.png", category: "Action" },
+  { title: "Buildnow.gg", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/buildnowgg.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/buildnowgg.png", category: "Shooter" },
+  { title: "Bus Simulator", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/bussim.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/bussim.png", category: "Simulation" },
+  { title: "Call of Battle", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cob.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cob.png", category: "Shooter" },
+  { title: "Capybara Clicker", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/capybaraclicker.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/capybaraclicker.png", category: "Idle" },
+  { title: "Car Crash", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/carcrash.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/carcrash.png", category: "Racing" },
+  { title: "Car Drawing", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cardrawing.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cardrawing.png", category: "Casual" },
+  { title: "Car Kings Arena", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/carkingsarena.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/carkingsarena.png", category: "Racing" },
+  { title: "Cell Machine", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cellmachine.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cellmachine.png", category: "Puzzle" },
+  { title: "Chess", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/chess.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/chess.png", category: "Strategy" },
+  { title: "Chicken War", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/chickenwar.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/chickenwar.png", category: "Action" },
+  { title: "Choppy Orc", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/choppyorc.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/choppyorc.png", category: "Action" },
+  { title: "Cleanup.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cleanupio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cleanupio.png", category: "Arcade" },
+  { title: "Climb Hard", url: "https://cdn.jsdelivr.net/gh/schoolflashx/x774@main/1.xml", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/climbhard.png", category: "Action" },
+  { title: "Cluster Rush", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/clusterrush.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/clusterrush.png", category: "Action" },
+  { title: "Cookie Clicker", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cookieclicker.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cookieclicker.png", category: "Idle" },
+  { title: "Crazy Cars", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/crazycars.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/crazycars.png", category: "Racing" },
+  { title: "Crazy Cattle 3D", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/crazycattle.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/crazycattle.png", category: "Action" },
+  { title: "Crossy Road", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/crossyroad.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/crossyroad.png", category: "Arcade" },
+  { title: "CS 1.6", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cs16.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cs16.png", category: "Shooter" },
+  { title: "CS 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cs2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cs2.png", category: "Shooter" },
+  { title: "CS 2 Surf", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cs2surf.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cs2surf.png", category: "Shooter" },
+  { title: "CS:GO Clicker", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/csgoclicker.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/csgoclicker.png", category: "Idle" },
+  { title: "Cuphead", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cuphead.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cuphead.png", category: "Action" },
+  { title: "Cut The Rope", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/cuttherope.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/cuttherope.png", category: "Puzzle" },
+  { title: "Death Chase", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/deathchase.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/deathchase.png", category: "Racing" },
+  { title: "Deepest Sword", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/deepestsword.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/deepestsword.png", category: "Action" },
+  { title: "Defend Your Nuts", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/defendyournuts.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/defendyournuts.png", category: "Strategy" },
+  { title: "Delivery Mystery", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/delm-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/delm.png", category: "Other" },
+  { title: "Dig To China", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/digtochina.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/digtochina.png", category: "Other" },
+  { title: "Doblox", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/doblox.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/doblox.png", category: "Other" },
+  { title: "Doge Miner", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/dogeminer.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/dogeminer.png", category: "Idle" },
+  { title: "Doge Miner 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/dogeminer2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/dogeminer2.png", category: "Idle" },
+  { title: "Doodle Jump", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/doodlejump.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/doodlejump.png", category: "Arcade" },
+  { title: "Draw Climber", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/drawclimber.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/drawclimber.png", category: "Arcade" },
+  { title: "Dreadhead Parkour", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/dreadheadparkour.htm", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/dreadheadparkour.png", category: "Action" },
+  { title: "Drift Boss", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/driftboss.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/driftboss.png", category: "Racing" },
+  { title: "Drift Hunters", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/drifthunters.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/drifthunters.png", category: "Racing" },
+  { title: "Drift No limit", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/dnl.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/dnl.png", category: "Racing" },
+  { title: "Drive in Russia", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/driveinrussia.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/driveinrussia.png", category: "Racing" },
+  { title: "Drive Mad", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/drivemad-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/drivemad.png", category: "Racing" },
+  { title: "Drive online", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/do.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/do.png", category: "Racing" },
+  { title: "Duck Life", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ducklife.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ducklife.png", category: "Sports" },
+  { title: "Duck Life 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ducklife2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ducklife2.png", category: "Sports" },
+  { title: "Duck Life 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ducklife3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ducklife3.png", category: "Sports" },
+  { title: "Duck Life 4", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ducklife4.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ducklife4.png", category: "Sports" },
+  { title: "Duck Life 5", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ducklife5.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ducklife5.png", category: "Sports" },
+  { title: "Eagle Ride", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/eagleride.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/eagleride.png", category: "Action" },
+  { title: "Edy's Car Simulator", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/edycarsim.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/edycarsim.png", category: "Racing" },
+  { title: "Eggy car", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/eggy.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/eggy.png", category: "Racing" },
+  { title: "Elastic Face", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/elasticface.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/elasticface.png", category: "Other" },
+  { title: "Escape Road", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/esc.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/esc.png", category: "Racing" },
+  { title: "Escape Road 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/esc2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/esc2.png", category: "Racing" },
+  { title: "Escape Road City 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/escrc2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/escrc2.png", category: "Racing" },
+  { title: "Escape Road 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/escaperoad3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/escaperoad3.png", category: "Racing" },
+  { title: "Escape Sherk's Swamp", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/escapesherlsswamp.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/escapesherlsswamp.png", category: "Action" },
+  { title: "Evil Glitch", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/evilglitch.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/evilglitch.png", category: "Arcade" },
+  { title: "FIFA 95", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa95.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa95.png", category: "Sports" },
+  { title: "FIFA 96", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa96.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa96.png", category: "Sports" },
+  { title: "FIFA 97", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa97.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa97.png", category: "Sports" },
+  { title: "FIFA 99", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa99.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa99.png", category: "Sports" },
+  { title: "FIFA 2000", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa2000.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa2000.png", category: "Sports" },
+  { title: "FIFA 06", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa06.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa06.png", category: "Sports" },
+  { title: "FIFA 07", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa07.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa07.png", category: "Sports" },
+  { title: "FIFA 10", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa10.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa10.png", category: "Sports" },
+  { title: "FIFA 11", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifa11.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifa11.png", category: "Sports" },
+  { title: "FIFA street 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fifas2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fifas2.png", category: "Sports" },
+  { title: "Fireboy & Watergirl 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fireboyandwatergirl2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fireboyandwatergirl2.png", category: "Puzzle" },
+  { title: "Flappy Bird", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/flappybird.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/flappybird.png", category: "Arcade" },
+  { title: "FNAE", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fnae-fix2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fnae.png", category: "Horror" },
+  { title: "FNAF 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fnaf2-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fnaf2.png", category: "Horror" },
+  { title: "FNAF 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fnaf3-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fnaf3.png", category: "Horror" },
+  { title: "FNAF 4", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fnaf4-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fnaf4.png", category: "Horror" },
+  { title: "FNAF World", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fnafworld-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fnafworld.png", category: "RPG" },
+  { title: "FNF", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fnf.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fnf.png", category: "Rhythm" },
+  { title: "Football Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/footballbros.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/footballbros.png", category: "Sports" },
+  { title: "Forest Survival", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fs.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fs.png", category: "Survival" },
+  { title: "Fork n Sausage", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/forknsausage.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/forknsausage.png", category: "Arcade" },
+  { title: "Fruit Ninja", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/fruitninja-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/fruitninja.png", category: "Arcade" },
+  { title: "Funny Mad Racing", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/funnymadracing.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/funnymadracing.png", category: "Racing" },
+  { title: "Funny city 3D", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/funnycity3d.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/funnycity3d.png", category: "Action" },
+  { title: "Funny Shooter 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/funnyshooter2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/funnyshooter2.png", category: "Shooter" },
+  { title: "Geometry Dash", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/gdash.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/gdash.png", category: "Arcade" },
+  { title: "Getaway Shootout", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/getawayshootout.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/getawayshootout.png", category: "Shooter" },
+  { title: "Gladihoppers", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/gladihoppers.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/gladihoppers.png", category: "Action" },
+  { title: "Golf Orbit", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/golforbit.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/golforbit.png", category: "Sports" },
+  { title: "Google Baseball", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/googlebaseball.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/googlebaseball.png", category: "Sports" },
+  { title: "Google Dino", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/googledino.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/googledino.png", category: "Arcade" },
+  { title: "Granny", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/granny.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/granny.png", category: "Horror" },
+  { title: "Granny 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/granny2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/granny2.png", category: "Horror" },
+  { title: "Granny 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/granny3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/granny3.png", category: "Horror" },
+  { title: "Granny Online", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/grannyonline-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/grannyonline.png", category: "Horror" },
+  { title: "Gravity", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/gravity.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/gravity.png", category: "Arcade" },
+  { title: "Grow a Garden", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/growagarden.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/growagarden.png", category: "Simulation" },
+  { title: "GTA Mods", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/gtamods.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/gtamods.png", category: "Action" },
+  { title: "Gun Spin", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/gunspin.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/gunspin.png", category: "Action" },
+  { title: "Helix Jump", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/helixjump.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/helixjump.png", category: "Arcade" },
+  { title: "Highway Racer 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/highwayracer2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/highwayracer2.png", category: "Racing" },
+  { title: "Hobo", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo.png", category: "Action" },
+  { title: "Hobo 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo2.png", category: "Action" },
+  { title: "Hobo 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo3.png", category: "Action" },
+  { title: "Hobo 4", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo4.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo4.png", category: "Action" },
+  { title: "Hobo 5", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo5.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo5.png", category: "Action" },
+  { title: "Hobo 6", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo6.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo6.png", category: "Action" },
+  { title: "Hobo 7", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hobo7.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hobo7.png", category: "Action" },
+  { title: "Hypper Sandbox", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/hyppersandbox.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/hyppersandbox.png", category: "Simulation" },
+  { title: "Idle Breakout", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/idlebreakout.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/idlebreakout.png", category: "Idle" },
+  { title: "Impossible Quiz", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/impossiblequiz.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/impossiblequiz.png", category: "Puzzle" },
+  { title: "Impossible Quiz 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/impossiblequiz2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/impossiblequiz2.png", category: "Puzzle" },
+  { title: "Indian Truck", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/indiantruck.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/indiantruck.png", category: "Racing" },
+  { title: "Iron Lung", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ironlung.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ironlung.png", category: "Horror" },
+  { title: "Jelly Drift", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/jellydrift-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/jellydrift.png", category: "Racing" },
+  { title: "Jelly Truck", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/jellytruck.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/jellytruck.png", category: "Racing" },
+  { title: "Jetpack Joyride", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/jetpackjoyride.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/jetpackjoyride.png", category: "Action" },
+  { title: "Johnny Trigger", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/johnnytrigger.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/johnnytrigger.png", category: "Shooter" },
+  { title: "Just Fall.lol", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/justfalllol.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/justfalllol.png", category: "Action" },
+  { title: "Kart Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/kartbro.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/kartbro.png", category: "Racing" },
+  { title: "Keyboard Escape", url: "https://cdn.jsdelivr.net/gh/school-management-google/backln@main/m.xml", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/kbe.png", category: "Platformer" },
+  { title: "Learn to Fly", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/learntofly.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/learntofly.png", category: "Action" },
+  { title: "Learn to Fly 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/learntofly2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/learntofly2.png", category: "Action" },
+  { title: "Learn to Fly 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/learntofly3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/learntofly3.png", category: "Action" },
+  { title: "Level Devil", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/leveldevil.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/leveldevil.png", category: "Platformer" },
+  { title: "Line Rider", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/linerider.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/linerider.png", category: "Other" },
+  { title: "Mad Pursuit", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/madpursuit-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/madpursuit.png", category: "Racing" },
+  { title: "Make Sure It's Closed", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/makesureitsclosed-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/makesureitsclosed.png", category: "Horror" },
+  { title: "Minecraft 1.8.8", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/mc188.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/mc188.png", category: "Adventure" },
+  { title: "Minecraft 1.12", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/mc112.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/mc112.png", category: "Adventure" },
+  { title: "Minecraft 1.21", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/mc121.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/mc121.png", category: "Adventure" },
+  { title: "Melon Playground", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/melonplayground.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/melonplayground.png", category: "Sandbox" },
+  { title: "Mom I'm Sleeping", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/momimsleeping.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/momimsleeping.png", category: "Other" },
+  { title: "Monkey Mart", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/monkeymart.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/monkeymart.png", category: "Simulation" },
+  { title: "Monster Track", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/monstertrack.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/monstertrack.png", category: "Racing" },
+  { title: "Moto X3M", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/motox3m.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/motox3m.png", category: "Racing" },
+  { title: "Night City Racing", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ncr.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ncr.png", category: "Racing" },
+  { title: "Noob Miner", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/noobminer.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/noobminer.png", category: "Adventure" },
+  { title: "Osu!", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/osu-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/osu.png", category: "Other" },
+  { title: "Ovo", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ovo.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ovo.png", category: "Platformer" },
+  { title: "Ovo 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ovo2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ovo2.png", category: "Platformer" },
+  { title: "P3ople Playground", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/p3opleplaygr0und.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/p3opleplaygr0und.png", category: "Sandbox" },
+  { title: "Paper.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/paperio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/paperio.png", category: "Arcade" },
+  { title: "Parking Fury", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/parkingfury.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/parkingfury.png", category: "Racing" },
+  { title: "Penalty Kicks", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/penkicks.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/penkicks.png", category: "Sports" },
+  { title: "Phasma", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/phasma.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/phasma.png", category: "Horror" },
+  { title: "Pixel Combat 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/pixelcombat2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/pixelcombat2.png", category: "Shooter" },
+  { title: "Pizza Papa", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/pizzapapa.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/pizzapapa.png", category: "Simulation" },
+  { title: "Plants vs Zombies", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/plantsvszombies.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/plantsvszombies.png", category: "Strategy" },
+  { title: "Ploy Track", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/polyt.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/polyt.png", category: "Racing" },
+  { title: "Pumpkin Run 64", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/pumpkinrun64.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/pumpkinrun64.png", category: "Platformer" },
+  { title: "Race City : Online", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/roc-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/roc.png", category: "Racing" },
+  { title: "Ragdoll Archers", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ragdollarchers.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ragdollarchers.png", category: "Action" },
+  { title: "Ragdoll Soccer", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/ragdollsoccer.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/ragdollsoccer.png", category: "Sports" },
+  { title: "Recoil", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/recoil.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/recoil.png", category: "Shooter" },
+  { title: "Red Ball 4", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/redball4.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/redball4.png", category: "Platformer" },
+  { title: "Red vs. Blue", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/redvsblue-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/redvsblue.png", category: "Shooter" },
+  { title: "Real Car driving", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/rcd.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/rcd.png", category: "Racing" },
+  { title: "Real Kart", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/realkart.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/realkart.png", category: "Racing" },
+  { title: "Retro Bowl", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/retrobowl.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/retrobowl.png", category: "Sports" },
+  { title: "Rocket League", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/rocketleague.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/rocketleague.png", category: "Sports" },
+  { title: "Rocket Soccer Derby", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/rocketsoccerderby.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/rocketsoccerderby.png", category: "Sports" },
+  { title: "Rooftop Run", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/rooftoprun-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/rooftoprun.png", category: "Action" },
+  { title: "Rooftop Sniper", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/rooftopsniper.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/rooftopsniper.png", category: "Shooter" },
+  { title: "Rooftop Sniper 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/rooftopsniper2.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/rooftopsniper2.png", category: "Shooter" },
+  { title: "Run 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/run3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/run3.png", category: "Platformer" },
+  { title: "Sausage Flip", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/sausageflip.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/sausageflip.png", category: "Action" },
+  { title: "Schoolboy Runaway", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/schoolbr.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/schoolboy.png", category: "Adventure" },
+  { title: "Skibidi Toilet.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/skibiditoiletio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/skibiditoiletio.png", category: "Action" },
+  { title: "Slither.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/slitherio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/slitherio.png", category: "Arcade" },
+  { title: "Slope", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/slope-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/slope.png", category: "Arcade" },
+  { title: "Slope 2 Player", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/slope2player.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/slope2.png", category: "Arcade" },
+  { title: "Slow Roads", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/slowroads.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/slowroads.png", category: "Racing" },
+  { title: "Smash Karts", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/smashkarts.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/smashkarts.png", category: "Racing" },
+  { title: "Sniper V2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/sniperv2-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/sniperv2.png", category: "Shooter" },
+  { title: "Snowball.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/snowballio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/snowballio.png", category: "Action" },
+  { title: "Snow Rider 3D", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/snowrider3d.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/snowrider3d.png", category: "Racing" },
+  { title: "Soccer Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/soccerbros.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/soccerbros.png", category: "Sports" },
+  { title: "Soccer Random", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/soccerrandom.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/soccerrandom.png", category: "Sports" },
+  { title: "Speed Stars", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/speedstars.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/speedstars.png", category: "Sports" },
+  { title: "Sprunki", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/sprunki-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/sprunki.png", category: "Other" },
+  { title: "Solar Smash", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/solarsmash.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/solarsmash.png", category: "Simulation" },
+  { title: "Squid Playground", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/squidplayground.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/squidplayground.png", category: "Sandbox" },
+  { title: "State.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/stateio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/stateio.png", category: "Strategy" },
+  { title: "Steal a Brainrot", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/stealabrainrot.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/stealabrainrot.png", category: "Adventure" },
+  { title: "Stickman Hook", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/stickmanhook-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/stickmanhook.png", category: "Action" },
+  { title: "Stickman kombat 2D", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/sk2d.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/sk2d.png", category: "Fighting" },
+  { title: "Subway Surfers", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/subwaysurfers.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/subwaysurfers.png", category: "Action" },
+  { title: "Suika", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/suika.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/suika.png", category: "Puzzle" },
+  { title: "Super Bike", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/superbike.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/superbike.png", category: "Racing" },
+  { title: "Superhot", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/superhot.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/superhot.png", category: "Shooter" },
+  { title: "Super Mario 64", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/supermario64.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/supermario64.png", category: "Platformer" },
+  { title: "Super Mario Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/supermariobros.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/supermariobros.png", category: "Platformer" },
+  { title: "Survev.io", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/survevio.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/survevio.png", category: "Shooter" },
+  { title: "Taco Truck", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/tacotruck.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/tacostand.png", category: "Simulation" },
+  { title: "Tag", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/tag.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/tag.png", category: "Action" },
+  { title: "Tanuki Sunset", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/tanukisunset.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/tanukisunset.png", category: "Sports" },
+  { title: "Temple Run 2", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/templerun2-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/templerun2.png", category: "Action" },
+  { title: "The Man From The Window", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/themanfromthewindow.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/themanfromthewindow.png", category: "Horror" },
+  { title: "There Is No Game", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/thereisnogame.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/thereisnogame.png", category: "Puzzle" },
+  { title: "Time Shooter 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/timeshooter3.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/timeshooter3.png", category: "Shooter" },
+  { title: "Train Simulator", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/trainsim.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/trainsim.png", category: "Simulation" },
+  { title: "Truck Simulator", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/trucksim.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/trucksim.png", category: "Simulation" },
+  { title: "Tunnel Rush", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/tunnelrush.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/tunnelrush.png", category: "Action" },
+  { title: "Undertale Yellow", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/undertaleyellow.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/undertaleyellow.png", category: "RPG" },
+  { title: "UNO", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/uno.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/uno.png", category: "Puzzle" },
+  { title: "Vex 3", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/vex3-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/vex3.png", category: "Action" },
+  { title: "Vex 4", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/vex4.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/vex4.png", category: "Action" },
+  { title: "Vex 5", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/vex5.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/vex5.png", category: "Action" },
+  { title: "Vex 6", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/vex6-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/vex6.png", category: "Action" },
+  { title: "Vex 7", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/vex7-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/vex7.png", category: "Action" },
+  { title: "Vex 8", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/vex8-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/vex8.png", category: "Action" },
+  { title: "Volley Random", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/volleyrandom.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/volleyrandom.png", category: "Sports" },
+  { title: "Wave Dash", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/wavedash.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/wavedash.png", category: "Action" },
+  { title: "Wheely", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/wheely.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/wheely.png", category: "Puzzle" },
+  { title: "Wordle", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/wordle.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/wordle.png", category: "Puzzle" },
+  { title: "World Cup 98", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/wc98.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/wc98.png", category: "Sports" },
+  { title: "World Cup 26", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/wc26.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/wc26.png", category: "Sports" },
+  { title: "World's Hardest Game", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/worldshardestgame.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/worldshardestgame.png", category: "Puzzle" },
+  { title: "Wrestle Bros", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/wrestlebros.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/wrestlebros.png", category: "Sports" },
+  { title: "YN Simulator", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/mrdude-fix.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/mrdude.png", category: "Simulation" },
+  { title: "Zombie Road", url: "https://cdn.jsdelivr.net/gh/idoit-16/X43hkdk39p3lw3xxpro/zombieroad.html", img: "https://cdn.jsdelivr.net/gh/idoit-16/gs-covers/zombieroad.png", category: "Action" }
+];
+
+const grid = document.getElementById("grid");
+const chipsEl = document.getElementById("chips");
+const counterBox = document.getElementById("counterBox");
+const footCount = document.getElementById("footCount");
+const emptyEl = document.getElementById("empty");
+const searchInput = document.getElementById("search");
+const recentSection = document.getElementById("recentSection");
+const recentRow = document.getElementById("recentRow");
+
+let activeCategory = "All";
+let favorites = new Set(JSON.parse(localStorage.getItem("pgz-favs") || "[]"));
+let recent = JSON.parse(localStorage.getItem("pgz-recent") || "[]");
+
+function starIcon(filled){
+  return `<svg viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9 12 2"/></svg>`;
+}
+
+function buildChips(){
+  const cats = ["All", ...Array.from(new Set(GAMES.map(g => g.category)))];
+  chipsEl.innerHTML = cats.map(c =>
+    `<button class="chip${c === activeCategory ? ' active' : ''}" data-cat="${c}">${c}</button>`
+  ).join("");
+  chipsEl.querySelectorAll(".chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeCategory = btn.dataset.cat;
+      buildChips();
+      render();
+    });
+  });
+}
+
+function cardHTML(game, i){
+  const isFav = favorites.has(game.title);
+  return `
+    <div class="card" style="animation-delay:${i * 25}ms" data-title="${game.title.toLowerCase()}" data-cat="${game.category}">
+      <button class="fav${isFav ? ' on' : ''}" aria-label="Toggle favorite" data-fav="${game.title}">${starIcon(isFav)}</button>
+      <div class="thumbwrap" data-open="${game.title}">
+        <div class="thumb" style="background-image:url('${game.img}')"></div>
+        <span class="tag">${game.category}</span>
+      </div>
+      <div class="card-title" data-open="${game.title}">${game.title}<span class="play">▶</span></div>
+    </div>`;
+}
+
+function render(){
+  const q = searchInput.value.toLowerCase().trim();
+  const filtered = GAMES.filter(g =>
+    (activeCategory === "All" || g.category === activeCategory) &&
+    g.title.toLowerCase().includes(q)
+  );
+
+  grid.innerHTML = filtered.map((g, i) => cardHTML(g, i)).join("");
+  counterBox.textContent = filtered.length + (filtered.length === 1 ? " game" : " games");
+  footCount.textContent = GAMES.length;
+  emptyEl.classList.toggle("show", filtered.length === 0);
+
+  grid.querySelectorAll("[data-open]").forEach(el => {
+    el.addEventListener("click", () => {
+      const game = GAMES.find(g => g.title === el.dataset.open);
+      if (game) openGame(game);
+    });
+  });
+  grid.querySelectorAll("[data-fav]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const title = btn.dataset.fav;
+      favorites.has(title) ? favorites.delete(title) : favorites.add(title);
+      localStorage.setItem("pgz-favs", JSON.stringify([...favorites]));
+      render();
+    });
+  });
+
+  renderRecent();
+}
+
+function renderRecent(){
+  if (!recent.length){ recentSection.style.display = "none"; return; }
+  recentSection.style.display = "block";
+  recentRow.innerHTML = recent.map(title => {
+    const g = GAMES.find(x => x.title === title);
+    if (!g) return "";
+    return `<div class="rchip" data-open="${g.title}"><img src="${g.img}" alt="">${g.title}</div>`;
+  }).join("");
+  recentRow.querySelectorAll("[data-open]").forEach(el => {
+    el.addEventListener("click", () => {
+      const game = GAMES.find(g => g.title === el.dataset.open);
+      if (game) openGame(game);
+    });
+  });
+}
+
+function pushRecent(title){
+  recent = [title, ...recent.filter(t => t !== title)].slice(0, 6);
+  localStorage.setItem("pgz-recent", JSON.stringify(recent));
+}
+
+async function openGame(game){
+  pushRecent(game.title);
+  render();
+
+  const win = window.open("about:blank", "_blank");
+  if (!win) return;
+
+  win.document.open();
+  win.document.write(`
+    <title>${game.title}</title>
+    <style>
+      html,body{height:100%;margin:0;background:#030b07;display:flex;align-items:center;justify-content:center;font-family:"Space Grotesk",sans-serif;color:#d8fbe9;}
+      .spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(40,209,124,.25);border-top-color:#28d17c;animation:sp .8s linear infinite;margin-bottom:14px;}
+      @keyframes sp{to{transform:rotate(360deg);}}
+      .box{display:flex;flex-direction:column;align-items:center;font-size:13px;letter-spacing:.5px;}
+    </style>
+    <div class="box"><div class="spin"></div>Loading ${game.title}...</div>
+  `);
+  win.document.close();
+
+  const faviconLink = win.document.createElement("link");
+  faviconLink.rel = "icon";
+  faviconLink.href = "https://i.postimg.cc/BbpTp2pc/PFP.png";
+  win.document.head.appendChild(faviconLink);
+
+  try {
+    const res = await fetch(game.url);
+    const html = await res.text();
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.document.title = game.title;
+  } catch (e) {
+    win.document.open();
+    win.document.write(`<body style="background:#030b07;color:#d8fbe9;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">Failed to load ${game.title}</body>`);
+    win.document.close();
+  }
+}
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  searchInput.value = "";
+  activeCategory = "All";
+  buildChips();
+  render();
+});
+
+searchInput.addEventListener("input", render);
+
+buildChips();
+render();
+</script>
+
+</body>
+</html>
